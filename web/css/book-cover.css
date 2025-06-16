@@ -1,0 +1,98 @@
+/* Стили для отображения обложки книги */
+
+.book-view-container {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.book-cover-container {
+    flex-shrink: 0;
+    width: 200px;
+}
+
+.book-cover {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
+    transition: transform 0.2s ease;
+}
+
+.book-cover:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover-placeholder {
+    width: 100%;
+    max-width: 200px;
+    height: 300px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+}
+
+.book-details-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.book-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .book-view-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .book-cover-container {
+        width: 150px;
+        align-self: center;
+    }
+    
+    .book-cover,
+    .book-cover-placeholder {
+        max-width: 150px;
+        height: auto;
+    }
+    
+    .book-cover-placeholder {
+        height: 225px;
+        font-size: 12px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .book-cover-container {
+        width: 120px;
+    }
+    
+    .book-cover,
+    .book-cover-placeholder {
+        max-width: 120px;
+    }
+    
+    .book-cover-placeholder {
+        height: 180px;
+        font-size: 11px;
+        padding: 10px;
+    }
+} 

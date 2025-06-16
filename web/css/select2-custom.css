@@ -1,0 +1,95 @@
+/* Кастомные стили для Select2 виджета выбора авторов */
+
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 34px;
+    padding: 2px 5px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #337ab7;
+    border: 1px solid #2e6da4;
+    color: white;
+    padding: 2px 8px;
+    margin: 2px;
+    border-radius: 3px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: white;
+    margin-right: 5px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #ffcccc;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+    margin-top: 5px;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.select2-dropdown {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #337ab7;
+    color: white;
+}
+
+/* Стили для сообщения "не найдено" с кнопкой */
+.select2-results__option .btn {
+    margin-top: 5px;
+    font-size: 11px;
+    padding: 2px 8px;
+}
+
+.select2-results__message {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Улучшенный внешний вид поиска */
+.select2-container--default .select2-search--inline .select2-search__field {
+    margin-top: 3px;
+    margin-left: 3px;
+    min-width: 150px;
+}
+
+/* Стили для выбранных элементов */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background: linear-gradient(to bottom, #337ab7 0%, #2e6da4 100%);
+    border: 1px solid #2e6da4;
+    color: white;
+    padding: 3px 10px;
+    margin: 3px 2px;
+    border-radius: 3px;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice:hover {
+    background: linear-gradient(to bottom, #2e6da4 0%, #337ab7 100%);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        font-size: 12px;
+        padding: 1px 6px;
+    }
+    
+    .select2-container--default .select2-search--inline .select2-search__field {
+        min-width: 100px;
+    }
+} 
