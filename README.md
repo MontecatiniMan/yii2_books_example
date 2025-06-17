@@ -88,22 +88,22 @@ cd usetech_test
 
 2. Запустите контейнеры:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 3. Примените миграции (включая RBAC):
 ```bash
-docker-compose exec php php yii migrate
+docker compose exec php php yii migrate
 ```
 
 4. Заполните БД образцовыми данными:
 ```bash
-docker-compose exec php php yii seed
+docker compose exec php php yii seed
 ```
 
 5. Создайте пользователя (опционально):
 ```bash
-docker-compose exec php php yii create-user admin admin@example.com password123
+docker compose exec php php yii create-user admin password123 admin@example.com
 ```
 
 Приложение будет доступно по адресу: http://localhost:8081
@@ -179,7 +179,7 @@ SMSPILOT_API_KEY=ваш_api_ключ
 
 ```bash
 # Заполнить БД образцовыми данными
-docker-compose exec php php yii seed
+docker compose exec php php yii seed
 
 # Или локально
 php yii seed
@@ -196,14 +196,14 @@ php yii seed
 
 ```bash
 # Очистить все данные из БД
-docker-compose exec php php yii seed/clear
+docker compose exec php php yii seed/clear
 ```
 
 #### `php yii seed/stats` - Статистика данных
 
 ```bash
 # Показать статистику данных в БД
-docker-compose exec php php yii seed/stats
+docker compose exec php php yii seed/stats
 ```
 
 **Пример вывода**:
@@ -222,10 +222,10 @@ docker-compose exec php php yii seed/stats
 
 ```bash
 # Создать нового пользователя с автоматическим назначением роли 'user'
-docker-compose exec php php yii create-user username email@example.com password123
+docker compose exec php php yii create-user username email@example.com password123
 
 # Пример
-docker-compose exec php php yii create-user admin admin@test.com mypassword
+docker compose exec php php yii create-user admin admin@test.com mypassword
 ```
 
 **Особенности**:
@@ -240,7 +240,7 @@ docker-compose exec php php yii create-user admin admin@test.com mypassword
 
 ```bash
 # Применить все новые миграции (включая RBAC)
-docker-compose exec php php yii migrate
+docker compose exec php php yii migrate
 ```
 
 **Что включается**:
@@ -252,35 +252,35 @@ docker-compose exec php php yii migrate
 
 ```bash
 # Просмотр истории миграций
-docker-compose exec php php yii migrate/history
+docker compose exec php php yii migrate/history
 
 # Откат миграций
-docker-compose exec php php yii migrate/down 1
+docker compose exec php php yii migrate/down 1
 
 # Просмотр новых миграций
-docker-compose exec php php yii migrate/new
+docker compose exec php php yii migrate/new
 ```
 
 ### Рекомендуемый порядок установки
 
 1. **Применить миграции**:
    ```bash
-   docker-compose exec php php yii migrate
+   docker compose exec php php yii migrate
    ```
 
 2. **Заполнить образцовыми данными**:
    ```bash
-   docker-compose exec php php yii seed
+   docker compose exec php php yii seed
    ```
 
 3. **Создать администратора** (опционально):
    ```bash
-   docker-compose exec php php yii create-user admin admin@example.com password123
+   docker compose exec php php yii create-user admin admin@example.com password123
    ```
 
 4. **Проверить статистику**:
    ```bash
-   docker-compose exec php php yii seed/stats
+   docker compose exec php php yii seed/stats
    ```
 
 ## Модели данных
