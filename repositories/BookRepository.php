@@ -89,11 +89,12 @@ class BookRepository implements BookRepositoryInterface
             // Добавляем новые связи
             if (!empty($authorIds)) {
                 $rows = [];
+                $currentTime = time();
                 foreach ($authorIds as $authorId) {
-                    $rows[] = [$book->id, $authorId];
+                    $rows[] = [$book->id, $authorId, $currentTime];
                 }
                 Yii::$app->db->createCommand()
-                    ->batchInsert('{{%book_author}}', ['book_id', 'author_id'], $rows)
+                    ->batchInsert('{{%book_author}}', ['book_id', 'author_id', 'created_at'], $rows)
                     ->execute();
             }
 

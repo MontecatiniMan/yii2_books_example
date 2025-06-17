@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use Exception;
+use Throwable;
 use Yii;
-use yii\web\Controller;
-use yii\filters\AccessControl;
 use app\services\interfaces\ReportServiceInterface;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
-class ReportController extends Controller
+class ReportController extends BaseController
 {
     public function __construct(
         $id,
@@ -21,28 +19,6 @@ class ReportController extends Controller
         $config = []
     ) {
         parent::__construct($id, $module, $config);
-    }
-
-    public function behaviors(): array
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => false,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-                'denyCallback' => function ($rule, $action) {
-                    throw new ForbiddenHttpException('Доступ запрещен. Авторизуйтесь для просмотра отчетов.');
-                }
-            ],
-        ];
     }
 
     public function actionTopAuthors($year = null): Response|string
@@ -56,8 +32,9 @@ class ReportController extends Controller
                 'authors' => $authors,
                 'year' => $actualYear,
             ]);
-        } catch (Exception $e) {
-            Yii::$app->session->setFlash('error', $e->getMessage());
+        } catch (Throwable $th) {
+            Yii::$app->session->setFlash('error', $th->getMessage());
+
             return $this->redirect(['site/index']);
         }
     }

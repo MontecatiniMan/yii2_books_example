@@ -3,12 +3,15 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * BookAuthor model
  *
+ * @property integer $id
  * @property integer $book_id
  * @property integer $author_id
+ * @property integer $created_at
  *
  * @property Book $book
  * @property Author $author
@@ -23,6 +26,16 @@ class BookAuthor extends ActiveRecord
         return '{{%book_author}}';
     }
 
+    public function behaviors(): array
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'updatedAtAttribute' => false, // Только created_at
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -30,7 +43,7 @@ class BookAuthor extends ActiveRecord
     {
         return [
             [['book_id', 'author_id'], 'required'],
-            [['book_id', 'author_id'], 'integer'],
+            [['book_id', 'author_id', 'created_at'], 'integer'],
             [['book_id'], 'exist', 'targetClass' => Book::class, 'targetAttribute' => 'id'],
             [['author_id'], 'exist', 'targetClass' => Author::class, 'targetAttribute' => 'id'],
         ];

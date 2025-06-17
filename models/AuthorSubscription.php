@@ -30,7 +30,6 @@ class AuthorSubscription extends ActiveRecord
         return [
             [
                 'class' => TimestampBehavior::class,
-                'updatedAtAttribute' => false,
             ],
         ];
     }

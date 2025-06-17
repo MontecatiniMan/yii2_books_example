@@ -6,16 +6,15 @@ namespace app\controllers;
 
 use Exception;
 use Yii;
-use yii\web\Controller;
-use yii\filters\AccessControl;
 use app\services\interfaces\BookServiceInterface;
 use app\services\interfaces\AuthorServiceInterface;
 use app\services\interfaces\FileUploadServiceInterface;
 use app\models\Book;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
-class BookController extends Controller
+class BookController extends BaseController
 {
     public function __construct(
         $id,
@@ -28,29 +27,14 @@ class BookController extends Controller
         parent::__construct($id, $module, $config);
     }
 
-    public function behaviors(): array
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['index', 'view'],
-                        'allow' => true,
-                        'roles' => ['?', '@'],
-                    ],
-                    [
-                        'actions' => ['create', 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-        ];
-    }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionIndex(): string
     {
+        $this->requirePermission('viewBooks');
+        
         $dataProvider = $this->bookService->getDataProvider();
 
         return $this->render('index', [
@@ -58,8 +42,13 @@ class BookController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionView(int $id): string
     {
+        $this->requirePermission('viewBooks');
+        
         $model = $this->bookService->getBook($id);
         $coverUrl = $this->bookService->getBookCoverUrl($model);
         
@@ -69,8 +58,13 @@ class BookController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionCreate(): Response|string
     {
+        $this->requirePermission('manageBooks');
+        
         $model = new Book();
         $authors = $this->authorService->getAllAuthors();
 
@@ -107,8 +101,13 @@ class BookController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionUpdate(int $id): Response|string
     {
+        $this->requirePermission('manageBooks');
+        
         $model = $this->bookService->getBook($id);
         $authors = $this->authorService->getAllAuthors();
         $currentAuthorIds = $this->bookService->getBookAuthorIds($id);
@@ -150,8 +149,13 @@ class BookController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionDelete(int $id): Response
     {
+        $this->requirePermission('manageBooks');
+        
         try {
             $this->bookService->deleteBook($id);
 

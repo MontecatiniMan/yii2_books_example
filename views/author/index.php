@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php if (!Yii::$app->user->isGuest): ?>
+    <?php if (Yii::$app->user->can('manageAuthors')): ?>
     <p>
         <?= Html::a('Добавить автора', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => Yii::$app->user->isGuest ? '{view}' : '{view} {update} {delete}',
+                'template' => Yii::$app->user->can('manageAuthors') ? '{view} {update} {delete}' : '{view}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [

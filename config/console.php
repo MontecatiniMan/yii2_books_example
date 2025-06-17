@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$container = require __DIR__ . '/bootstrap.php';
 
 $config = [
     'id' => 'basic-console',
@@ -17,6 +18,9 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
         'log' => [
             'targets' => [
                 [
@@ -27,6 +31,7 @@ $config = [
         ],
         'db' => $db,
     ],
+    'container' => $container,
     'params' => $params,
     /*
     'controllerMap' => [

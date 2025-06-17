@@ -1,7 +1,5 @@
 <?php
 
-namespace app\migrations;
-
 use yii\db\Migration;
 
 class m240000_000002_create_books_table extends Migration
@@ -11,9 +9,9 @@ class m240000_000002_create_books_table extends Migration
         $this->createTable('{{%books}}', [
             'id' => $this->primaryKey(),
             'title' => $this->string()->notNull(),
-            'description' => $this->text(),
-            'isbn' => $this->string(13)->unique(),
             'publication_year' => $this->integer()->notNull(),
+            'description' => $this->text(),
+            'isbn' => $this->string(20)->unique(),
             'cover_image' => $this->string(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),

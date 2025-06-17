@@ -29,7 +29,7 @@ $this->registerCssFile('@web/css/book-cover.css');
 
         <!-- Детали книги справа -->
         <div class="book-details-container">
-            <?php if (!Yii::$app->user->isGuest): ?>
+            <?php if (Yii::$app->user->can('manageBooks')): ?>
             <p>
                 <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                 <?= Html::a('Удалить', ['delete', 'id' => $model->id], [

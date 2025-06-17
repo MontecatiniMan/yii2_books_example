@@ -75,6 +75,4 @@ class Book extends ActiveRecord
         return $this->hasMany(Author::class, ['id' => 'author_id'])
             ->viaTable('{{%book_author}}', ['book_id' => 'id']);
     }
-
-
-} 
+}

@@ -7,54 +7,62 @@ use FunctionalTester;
 class BasicControllersCest
 {
     /**
-     * Тест доступности публичных страниц для гостей
+     * Тест доступности публичных страниц
      */
     public function testPublicPagesAccessible(FunctionalTester $I): void
     {
         $I->wantTo('проверить доступность публичных страниц');
         
-        $publicPages = [
-            '/' => 'Главная страница',
-            '/site/index' => 'Главная страница (явный URL)',
-            '/site/about' => 'Страница "О нас"',
-            '/site/contact' => 'Страница контактов',
-            '/site/login' => 'Страница входа',
-            '/author/index' => 'Список авторов',
-            '/book/index' => 'Список книг',
-        ];
-
-        foreach ($publicPages as $url => $description) {
-            $I->comment("Проверяю: {$description} ({$url})");
-            $I->amOnPage($url);
-            $I->seeResponseCodeIsSuccessful();
-            $I->dontSee('Fatal error');
-            $I->dontSee('Exception');
-            $I->dontSee('Parse error');
-        }
+        // Проверяю: Главная страница (/)
+        $I->amOnPage('/');
+        $I->seeResponseCodeIsSuccessful();
+        $I->dontSee('Fatal error');
+        $I->dontSee('Exception');
+        $I->dontSee('Parse error');
+        
+        // Проверяю: Список книг (/book/index)
+        $I->amOnPage('/book/index');
+        $I->seeResponseCodeIsSuccessful();
+        $I->dontSee('Fatal error');
+        $I->dontSee('Exception');
+        $I->dontSee('Parse error');
+        
+        // Проверяю: Список авторов (/author/index)
+        $I->amOnPage('/author/index');
+        $I->seeResponseCodeIsSuccessful();
+        $I->dontSee('Fatal error');
+        $I->dontSee('Exception');
+        $I->dontSee('Parse error');
+        
+        // Проверяю: Отчеты (/report/top-authors)
+        $I->amOnPage('/report/top-authors');
+        $I->seeResponseCodeIsSuccessful();
+        $I->dontSee('Fatal error');
+        $I->dontSee('Exception');
+        $I->dontSee('Parse error');
     }
 
     /**
-     * Тест ограничения доступа к отчетам для неавторизованных пользователей
+     * Тест доступа к отчетам для всех пользователей (согласно ТЗ)
      */
-    public function testGuestCannotAccessReports(FunctionalTester $I)
+    public function testGuestCanAccessReports(FunctionalTester $I): void
     {
-        $I->wantTo('проверить, что отчеты недоступны неавторизованным пользователям');
+        $I->wantTo('проверить, что отчеты доступны всем пользователям согласно ТЗ');
         
         $I->amOnPage('/report/top-authors');
-        // В тестовой среде может быть редирект на главную вместо 403
-        // Главное - убедиться что контент отчетов не показывается
-        $I->dontSee('Топ авторы');
-        $I->dontSee('ТОП-10 авторов');
-        $I->dontSee('Список популярных авторов');
+        $I->seeResponseCodeIsSuccessful();
         
-        // И что пользователь видит главную страницу или ошибку
-        $I->see('Добро пожаловать', 'h1');
+        // Проверяем, что страница отчета загружается
+        $I->see('Топ-10 авторов', 'h1');
+        $I->see('Год:');
+        $I->seeElement('input[name="year"]');
+        $I->seeElement('button[type="submit"]');
     }
 
     /**
      * Тест скрытия кнопок создания и редактирования для неавторизованных пользователей
      */
-    public function testGuestCannotSeeActionButtons(FunctionalTester $I)
+    public function testGuestCannotSeeActionButtons(FunctionalTester $I): void
     {
         $I->wantTo('проверить, что гости не видят кнопки создания, редактирования и удаления');
         
@@ -78,49 +86,32 @@ class BasicControllersCest
         $I->dontSeeElement('a[title="Редактировать"]');
         $I->dontSeeElement('a[title="Удалить"]');
         
-        // Проверяем, что ссылка на отчеты отсутствует в навигации
+        // Проверяем, что ссылка на отчеты присутствует в навигации (доступна всем согласно ТЗ)
         $I->amOnPage('/');
-        $I->dontSee('Отчеты');
-        $I->dontSeeElement('a[href*="/report"]');
+        $I->see('Отчеты');
+        $I->seeElement('a[href*="/report"]');
     }
 
     /**
-     * Тест защищенных страниц - должны редиректить на логин
+     * Тест защиты страниц, требующих авторизации
      */
-    public function testProtectedPagesRequireAuth(FunctionalTester $I)
+    public function testProtectedPagesRequireAuth(FunctionalTester $I): void
     {
         $I->wantTo('проверить, что защищенные страницы требуют авторизации');
         
-        $protectedPages = [
-            '/author/create' => 'Создание автора',
-            '/book/create' => 'Создание книги',
-            '/report/top-authors' => 'Отчеты',
-        ];
-
-        foreach ($protectedPages as $url => $description) {
-            $I->comment("Проверяю защиту: {$description} ({$url})");
-            $I->amOnPage($url);
-            
-            if ($url === '/report/top-authors') {
-                // Отчеты должны быть недоступны - пользователь не должен видеть контент отчетов
-                $I->dontSee('Топ авторы');
-                $I->dontSee('ТОП-10 авторов');
-                $I->see('Добро пожаловать', 'h1'); // Перенаправлен на главную
-            } else {
-                // AccessControl редиректит на главную страницу, поэтому проверяем, что мы НЕ на форме создания
-                $I->seeResponseCodeIsSuccessful();
-                $I->dontSee('Создать автора', 'h1');
-                $I->dontSee('Создать книгу', 'h1');
-                $I->dontSee('input[name="Author[name]"]');
-                $I->dontSee('input[name="Book[title]"]');
-            }
-        }
+        // Проверяю защиту: Создание автора (/author/create)
+        $I->amOnPage('/author/create');
+        $I->seeResponseCodeIs(403); // Ожидаем 403 Forbidden для неавторизованного пользователя
+        
+        // Проверяю защиту: Создание книги (/book/create)
+        $I->amOnPage('/book/create');
+        $I->seeResponseCodeIs(403); // Ожидаем 403 Forbidden для неавторизованного пользователя
     }
 
     /**
      * Тест наличия основных элементов интерфейса
      */
-    public function testUIElementsPresent(FunctionalTester $I)
+    public function testUIElementsPresent(FunctionalTester $I): void
     {
         $I->wantTo('проверить наличие основных элементов интерфейса');
         
@@ -133,8 +124,8 @@ class BasicControllersCest
         $I->see('Главная');
         $I->see('Книги');
         $I->see('Авторы');
-        // Гости не должны видеть ссылку "Отчеты"
-        $I->dontSee('Отчеты');
+        // Согласно новому ТЗ RBAC - отчеты доступны всем
+        $I->see('Отчеты');
         
         // В тестовом окружении достаточно проверить, что есть навигация и основные элементы
     }
@@ -142,11 +133,11 @@ class BasicControllersCest
     /**
      * Тест безопасности - проверка отсутствия отладочной информации
      */
-    public function testNoDebugInfoLeakage(FunctionalTester $I)
+    public function testNoDebugInfoLeakage(FunctionalTester $I): void
     {
         $I->wantTo('проверить отсутствие утечки отладочной информации');
         
-        $pages = ['/', '/author/index', '/book/index', '/site/contact'];
+        $pages = ['/', '/author/index', '/book/index', '/site/contact', '/report/top-authors'];
         
         foreach ($pages as $url) {
             $I->amOnPage($url);
@@ -162,11 +153,11 @@ class BasicControllersCest
     /**
      * Тест проверки времени отклика страниц
      */
-    public function testPageLoadTime(FunctionalTester $I)
+    public function testPageLoadTime(FunctionalTester $I): void
     {
         $I->wantTo('проверить время загрузки основных страниц');
         
-        $pages = ['/', '/author/index', '/book/index'];
+        $pages = ['/', '/author/index', '/book/index', '/report/top-authors'];
         
         foreach ($pages as $url) {
             $start = microtime(true);
@@ -187,7 +178,7 @@ class BasicControllersCest
     /**
      * Тест базовой навигации
      */
-    public function testBasicNavigation(FunctionalTester $I)
+    public function testBasicNavigation(FunctionalTester $I): void
     {
         $I->wantTo('проверить базовую навигацию по сайту');
         
@@ -205,29 +196,30 @@ class BasicControllersCest
         $I->seeInCurrentUrl('book');
         $I->seeResponseCodeIsSuccessful();
         
-        // Для неавторизованных пользователей ссылка на отчеты должна отсутствовать
-        $I->dontSee('Отчеты');
+        // Переходим к отчетам (доступны всем согласно ТЗ)
+        $I->click('Отчеты');
+        $I->seeInCurrentUrl('report');
+        $I->seeResponseCodeIsSuccessful();
+        $I->see('Топ-10 авторов', 'h1');
     }
 
     /**
-     * Тест обработки ошибок 404
+     * Тест обработки несуществующих страниц
      */
-    public function testNotFoundPages(FunctionalTester $I)
+    public function testNotFoundPages(FunctionalTester $I): void
     {
-        $I->wantTo('проверить обработку несуществующих страниц');
+        $I->wantTo('проверить корректную обработку несуществующих страниц');
         
-        // В тестовом окружении проверим, что контроллеры обрабатывают неверные ID
-        // Основная проверка - что страница не падает с ошибкой
-        $notFoundPages = [
-            '/author/view?id=99999',
-            '/book/view?id=99999',
-        ];
-
-        foreach ($notFoundPages as $url) {
-            $I->comment("Проверяю обработку: {$url}");
-            $I->amOnPage($url);
-            $I->seeResponseCodeIsSuccessful(); // Главное - что нет 500 ошибки
-            // В тестовом окружении может быть редирект на главную - это тоже норм
-        }
+        // Проверяю обработку: /author/view?id=99999
+        $I->amOnPage('/author/view?id=99999');
+        $I->seeResponseCodeIs(404); // Ожидаем 404 Not Found для несуществующего автора
+        
+        // Проверяю обработку: /book/view?id=99999
+        $I->amOnPage('/book/view?id=99999');
+        $I->seeResponseCodeIs(404); // Ожидаем 404 Not Found для несуществующей книги
+        
+        // Проверяю обработку: несуществующий контроллер
+        $I->amOnPage('/nonexistent/index');
+        $I->seeResponseCodeIs(404); // Ожидаем 404 Not Found для несуществующего контроллера
     }
 } 

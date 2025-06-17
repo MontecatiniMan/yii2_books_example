@@ -6,15 +6,14 @@ namespace app\controllers;
 
 use Exception;
 use Yii;
-use yii\web\Controller;
-use yii\filters\AccessControl;
 use app\services\interfaces\AuthorServiceInterface;
 use app\services\interfaces\SubscriptionServiceInterface;
 use app\services\interfaces\BookServiceInterface;
 use app\models\Author;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
-class AuthorController extends Controller
+class AuthorController extends BaseController
 {
     public function __construct(
         $id,
@@ -27,29 +26,14 @@ class AuthorController extends Controller
         parent::__construct($id, $module, $config);
     }
 
-    public function behaviors(): array
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'actions' => ['index', 'view', 'subscribe'],
-                        'allow' => true,
-                        'roles' => ['?', '@'],
-                    ],
-                    [
-                        'actions' => ['create', 'update', 'delete'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-        ];
-    }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionIndex(): string
     {
+        $this->requirePermission('viewAuthors');
+        
         $dataProvider = $this->authorService->getDataProvider();
 
         return $this->render('index', [
@@ -57,8 +41,13 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionView(int $id): string
     {
+        $this->requirePermission('viewAuthors');
+        
         $model = $this->authorService->getAuthor($id);
         
         // Получаем URL обложек для всех книг автора
@@ -73,8 +62,13 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionSubscribe(int $id): Response
     {
+        $this->requirePermission('subscribeToAuthor');
+        
         $author = $this->authorService->getAuthor($id);
         
         if (Yii::$app->request->isPost) {
@@ -106,8 +100,13 @@ class AuthorController extends Controller
         return $this->redirect(['view', 'id' => $id]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionCreate(): Response|string
     {
+        $this->requirePermission('manageAuthors');
+        
         $model = new Author();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -127,8 +126,13 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionUpdate(int $id): Response|string
     {
+        $this->requirePermission('manageAuthors');
+        
         $author = $this->authorService->getAuthor($id);
 
         $model = new Author();
@@ -151,8 +155,13 @@ class AuthorController extends Controller
         ]);
     }
 
+    /**
+     * @throws ForbiddenHttpException
+     */
     public function actionDelete(int $id): Response
     {
+        $this->requirePermission('manageAuthors');
+        
         try {
             $this->authorService->deleteAuthor($id);
 

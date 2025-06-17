@@ -47,8 +47,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ['label' => 'Главная', 'url' => ['/site/index']],
             ['label' => 'Книги', 'url' => ['/book/index']],
             ['label' => 'Авторы', 'url' => ['/author/index']],
-            // Отчеты только для авторизованных пользователей
-            !Yii::$app->user->isGuest ? ['label' => 'Отчеты', 'url' => ['/report/top-authors']] : null,
+            // Отчеты доступны всем пользователям согласно ТЗ
+            ['label' => 'Отчеты', 'url' => ['/report/top-authors']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Войти', 'url' => ['/site/login']]
             ) : (

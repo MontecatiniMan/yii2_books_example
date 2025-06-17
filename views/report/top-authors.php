@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <form method="get" class="form-inline mb-4">
                 <div class="form-group">
                     <label for="year">Год:</label>
-                    <input type="number" class="form-control" id="year" name="year" value="<?= $year ?>" min="1900" max="<?= date('Y') ?>">
+                    <input type="number" class="form-control" id="year" name="year" value="<?= $year ?>" max="<?= date('Y') ?>">
                 </div>
                 <button type="submit" class="btn btn-primary">Показать</button>
             </form>
